@@ -1,6 +1,5 @@
-version: "3.8"
 services:
-  app-dev:
+  app:
     container_name: "ytdl-web-dev"
     build:
       context: .

@@ -26,7 +26,7 @@ const CustomisedCardActions = styled(CardActions)(() => ({
 }));
 
 
-const Preview = ({ preview, onDonwloadEnqueue, setPreview }) => {
+const Preview = ({ preview, onSubmitSuccess, setPreview }) => {
     const setIsLoading = useContext(LoadingContext);
     const [audioStream, setAudioStream] = useState(preview.audioStreams[0].id)
     const [videoStream, setVideoStream] = useState(preview.videoStreams[0].id)
@@ -39,8 +39,8 @@ const Preview = ({ preview, onDonwloadEnqueue, setPreview }) => {
         setIsLoading(true);
         API.enqueueDownload(url, videoStream, audioStream, mediaFormat).catch((error) => {
             console.log(error);
-        }).then((result) => {
-            onDonwloadEnqueue(result);
+        }).then(() => {
+            onSubmitSuccess();
             setIsLoading(false);
         });
     }
@@ -141,7 +141,7 @@ Preview.propTypes = {
         })),
         mediaFormats: PropTypes.arrayOf(PropTypes.string)
     }),
-    onDonwloadEnqueue: PropTypes.func,
+    onSubmitSuccess: PropTypes.func,
     setPreview: PropTypes.func
 }
 

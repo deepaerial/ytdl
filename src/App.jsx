@@ -48,12 +48,20 @@ const App = () => {
         }
     };
 
-    const onDownloadsFetched = (downloads) => {
-        setPreview(null);
-        dispatch({
-            type: ACTION.FETCH_ALL,
-            downloads
-        });
+    const downloadList = async () => {
+        setIsLoading(true);
+        try {
+            const downloads = await API.getDownloads();
+            setPreview(null);
+            dispatch({
+                type: ACTION.FETCH_ALL,
+                downloads
+            });
+        } catch (error){
+            toast.error(error.message)
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const onDownloadDelete = (download) => {
@@ -90,18 +98,7 @@ const App = () => {
         onAppStart();
     }, []);
     useEffect(() => {
-        const donwloadListLoad = async () => {
-            setIsLoading(true);
-            try {
-                const downloads = await API.getDownloads();
-                onDownloadsFetched(downloads);
-            } catch (error){
-                toast.error(error.message)
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        donwloadListLoad();
+        downloadList();
     }, [apiVersion]);
 
     const renderDownloads = () => {
@@ -137,7 +134,7 @@ const App = () => {
                 />
                 <Header version={appVersion} apiVersion={apiVersion}/>
                 <SearchBar isDesktop={isDesktop} setPreview={setPreview} />
-                {preview && <Preview preview={preview} onDonwloadEnqueue={onDownloadsFetched} setPreview={setPreview} />}
+                {preview && <Preview preview={preview} onSubmitSuccess={downloadList} setPreview={setPreview} />}
                 {renderDownloads()}
             </ConfirmProvider>
         </React.Fragment>
